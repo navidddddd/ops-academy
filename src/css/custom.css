@@ -1,96 +1,122 @@
+/* وارد کردن فونت‌ها */
 @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css');
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap');
 
 :root {
-  /* تنظیم فونت‌های سایت */
-  --ifm-font-family-base: 'Vazirmatn', system-ui, sans-serif !important;
+  /* تنظیم دقیق فونت‌ها */
+  --ifm-font-family-base: 'Vazirmatn', Tahoma, sans-serif !important;
   --ifm-font-family-monospace: 'Fira Code', monospace !important;
   
-  /* رنگ آبی هارمونیک و مهندسی */
+  /* رنگ‌بندی فوق‌حرفه‌ای سرمه‌ای/آبی */
   --ifm-color-primary: #3b82f6;
   --ifm-color-primary-dark: #2563eb;
   --ifm-color-primary-darker: #1d4ed8;
   --ifm-color-primary-darkest: #1e3a8a;
   
-  /* بهبود سایز فونت و فاصله خطوط برای خوانایی بهتر متن درس‌ها */
-  --ifm-font-size-base: 16px;
-  --ifm-line-height-base: 1.8;
-  --ifm-heading-line-height: 1.5;
+  /* سایز پایه متون */
+  --ifm-font-size-base: 15px;
 }
 
 [data-theme='dark'] {
-  /* تنظیم پس‌زمینه دارک بسیار شیک (Slate) به جای مشکیِ خالص */
-  --ifm-background-color: #0f172a; 
-  --ifm-background-surface-color: #1e293b;
-  --ifm-color-content: #cbd5e1; /* رنگ متن خوانا */
-  --ifm-heading-color: #f8fafc; /* رنگ تیترهای روشن‌تر */
-}
-
-/* چپ‌چین کردن کدهای لینوکسی درون متن‌های فارسی */
-pre, code {
-    direction: ltr !important;
-    text-align: left !important;
-    font-size: 0.95rem;
-}
-
-/* بزرگ‌تر و خواناتر کردن محتوای درس‌ها */
-.markdown {
-    font-size: 1.05rem;
-    color: var(--ifm-color-content);
+  /* بک‌گراند دارک مدرن (خاکستری مایل به سرمه‌ای تیره) */
+  --ifm-background-color: #0b1121; 
+  --ifm-background-surface-color: #162032;
+  --ifm-color-content: #cbd5e1;
+  --ifm-heading-color: #f8fafc;
 }
 
 /* ========================================= */
-/* استایل کارت‌های دوره‌ها در صفحه اصلی */
+/* ۱. حل مشکل سایز غول‌پیکر تیترها */
+/* ========================================= */
+.markdown h1 { font-size: 1.8rem !important; margin-bottom: 1.5rem; font-weight: 900; }
+.markdown h2 { font-size: 1.4rem !important; margin-top: 2.5rem; border-bottom: 1px solid #1e293b; padding-bottom: 8px; color: #f1f5f9;}
+.markdown h3 { font-size: 1.2rem !important; margin-top: 2rem; color: var(--ifm-color-primary-light); }
+.markdown p, .markdown li { font-size: 1.05rem; line-height: 2; }
+
+/* ========================================= */
+/* ۲. حل قطعی مشکل به هم ریختن علائم (< و >) */
+/* ========================================= */
+code {
+    direction: ltr !important;
+    unicode-bidi: isolate !important; /* این خط کد جلوی تداخل فارسی و انگلیسی را می‌گیرد */
+    text-align: left !important;
+    display: inline-block; /* ایزوله کردن بلوک‌های کد در متن */
+    margin: 0 3px;
+    padding: 2px 6px !important;
+    font-size: 0.9em !important;
+    background-color: rgba(59, 130, 246, 0.1) !important;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+pre, pre code {
+    display: block;
+    margin: 0;
+}
+
+/* ========================================= */
+/* ۳. طراحی شبکه ۴ کارته و شیکِ لندینگ‌پیج */
 /* ========================================= */
 .course-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 1.5rem;
     margin-top: 2rem;
+    direction: rtl;
 }
 
 .course-card {
     background-color: var(--ifm-background-surface-color);
-    border: 1px solid #334155;
+    border: 1px solid #1e293b;
     border-radius: 12px;
-    padding: 2rem;
+    padding: 1.5rem;
     text-align: right;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+/* نوار رنگی بالای کارت که در حالت هاور باز می‌شود */
+.course-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--ifm-color-primary);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: right;
 }
 
 .course-card:hover {
     transform: translateY(-5px);
-    border-color: var(--ifm-color-primary);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-color: #334155;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.course-card:hover::before {
+    transform: scaleX(1);
 }
 
 .course-title {
-    font-size: 1.4rem;
-    font-weight: 900;
+    font-size: 1.25rem;
+    font-weight: 800;
     color: var(--ifm-heading-color);
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
 }
 
 .course-desc {
     color: #94a3b8;
-    font-size: 1rem;
+    font-size: 0.95rem;
     line-height: 1.8;
     margin-bottom: 1.5rem;
 }
 
-.course-status {
-    font-size: 0.85rem;
+.status-badge {
+    font-size: 0.8rem;
     font-weight: bold;
-    display: inline-block;
-    padding: 6px 12px;
+    padding: 4px 10px;
     border-radius: 20px;
 }
-
-/* وضعیت‌های مختلف دوره‌ها */
-.status-active { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-.status-soon { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-.status-draft { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.status-active { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+.status-soon { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); }
