@@ -49,7 +49,8 @@ const config = {
         disableSwitch: false,
       },
       navbar: {
-        title: 'Ops Academy',
+        title: 'Ops Academy 🚀',
+        /* بخش logo از اینجا حذف شد تا دایناسور محو شود */
         items: [
           {
             type: 'docSidebar',
@@ -57,13 +58,6 @@ const config = {
             position: 'right',
             label: 'مسیر لینوکس (RHCSA)',
           },
-          {
-            href: 'https://github.com/navidddddd',
-            label: 'GitHub',
-            position: 'left',
-          },
-        ],
-      },
       footer: {
         style: 'dark',
         copyright: `ساخته شده با ❤️ | تمام حقوق برای Ops Academy محفوظ است © ${new Date().getFullYear()}`,
