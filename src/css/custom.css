@@ -5,10 +5,8 @@
 :root {
   --ifm-font-family-base: 'Vazirmatn', system-ui, -apple-system, sans-serif !important;
   --ifm-font-family-monospace: 'Fira Code', monospace !important;
-  
   --ifm-color-primary: #6366f1;
   --ifm-color-primary-dark: #4f46e5;
-  
   --ifm-background-color: #f8fafc;
   --ifm-background-surface-color: #ffffff;
   --ops-heading-color: #1e293b;
@@ -24,24 +22,15 @@
   --ops-border-color: #1e293b;
 }
 
-/* ======================================= */
-/* Typography: Elegant & Minimal Sizing */
-/* ======================================= */
+/* Typography */
 body, .markdown { color: var(--ops-text-color); direction: rtl; text-align: right; }
-
-.markdown h1, .markdown h2, .markdown h3, .markdown h4 { 
-  color: var(--ops-heading-color) !important; 
-  font-weight: 800;
-}
-
-.markdown h1 { font-size: 1.8rem !important; margin-bottom: 1.5rem; letter-spacing: -0.5px; }
+.markdown h1, .markdown h2, .markdown h3, .markdown h4 { color: var(--ops-heading-color) !important; font-weight: 800; }
+.markdown h1 { font-size: 1.8rem !important; margin-bottom: 1.5rem; }
 .markdown h2 { font-size: 1.4rem !important; margin-top: 2.5rem; border-bottom: 1px solid var(--ops-border-color); padding-bottom: 8px; }
 .markdown h3 { font-size: 1.15rem !important; margin-top: 1.5rem; color: var(--ifm-color-primary) !important; }
 .markdown p, .markdown li { font-size: 1rem; line-height: 2.2; }
 
-/* ======================================= */
-/* Strict LTR for Code Blocks (The Fix) */
-/* ======================================= */
+/* Strict LTR for Code Blocks */
 div[class*="codeBlockContainer_"], pre.prism-code {
   direction: ltr !important;
   text-align: left !important;
@@ -49,8 +38,6 @@ div[class*="codeBlockContainer_"], pre.prism-code {
   border-radius: 8px;
   margin-bottom: 1.5rem;
 }
-
-/* Fix for inline code inside Persian text */
 .markdown code {
   direction: ltr !important;
   unicode-bidi: bidi-override isolate !important;
@@ -63,38 +50,41 @@ div[class*="codeBlockContainer_"], pre.prism-code {
   margin: 0 2px;
   vertical-align: middle;
 }
-
 [data-theme='dark'] .markdown code { color: #a5b4fc !important; }
 
-/* Remove pagination labels */
-.pagination-nav__link .pagination-nav__label { display: none !important; }
-.pagination-nav__link .pagination-nav__sublabel { font-size: 1.1rem !important; font-weight: 800 !important; color: var(--ifm-color-primary) !important; margin: 0 !important; }
+/* Clean Pagination Buttons (Next/Prev Fix) */
+.pagination-nav { gap: 15px; margin-top: 3rem; }
+.pagination-nav__link {
+  border: 1px solid var(--ops-border-color) !important;
+  border-radius: 8px !important;
+  padding: 0.8rem 2rem !important;
+  background: var(--ifm-background-surface-color);
+  transition: all 0.2s ease;
+  max-width: 200px;
+  text-align: center;
+}
+.pagination-nav__link:hover { border-color: var(--ifm-color-primary) !important; background: rgba(99, 102, 241, 0.05); transform: translateY(-2px); }
+.pagination-nav__label { display: none !important; }
+.pagination-nav__sublabel { font-size: 1.1rem !important; font-weight: 800 !important; color: var(--ifm-color-primary) !important; margin: 0 !important; }
 
-/* ======================================= */
 /* Full-Width Course Rows */
-/* ======================================= */
 .course-row-container { display: flex; flex-direction: column; gap: 1.5rem; }
-
 .course-row {
   display: flex; align-items: center; gap: 2rem;
   background-color: var(--ifm-background-surface-color);
   border: 1px solid var(--ops-border-color);
   border-radius: 12px; padding: 2.5rem;
-  transition: all 0.2s ease;
-  width: 100%;
+  transition: all 0.2s ease; width: 100%;
 }
 .course-row:hover { border-color: var(--ifm-color-primary); transform: translateY(-3px); }
-
 .course-icon {
   font-size: 3rem; width: 80px; height: 80px;
   background: rgba(99,102,241,0.05); border-radius: 20px;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-
 .course-details { flex-grow: 1; text-align: start; }
 .course-title { font-size: 1.5rem; font-weight: 900; color: var(--ops-heading-color); margin-bottom: 0.5rem; }
 .course-desc { font-size: 1rem; color: var(--ops-text-color); line-height: 2; max-width: 800px; }
-
 .course-action { min-width: 180px; text-align: center; border-inline-start: 1px solid var(--ops-border-color); padding-inline-start: 2rem; }
 
 @media (max-width: 768px) {
