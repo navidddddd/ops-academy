@@ -5,30 +5,32 @@ import Layout from '@theme/Layout';
 
 export default function Home() {
   const {siteConfig} = useDocusaurusContext();
+  
   return (
-    <Layout title="خانه" description="پایگاه دانش مهندسی زیرساخت و DevOps">
+    <Layout title="Home" description="Ops Academy Infrastructure and DevOps Knowledge Base">
       
-      {/* هدر اصلی با گرادیان مشکی عمیق */}
-      <header style={{ background: 'linear-gradient(180deg, #030712 0%, #111827 100%)', padding: '6rem 2rem', textAlign: 'center', borderBottom: '1px solid #1f2937' }}>
-        <div className="container">
-          <h1 style={{ fontWeight: '900', fontSize: '3.5rem', marginBottom: '1rem', color: '#f9fafb', textShadow: '0 4px 20px rgba(139, 92, 246, 0.3)' }}>
+      {/* Hero Section */}
+      <header className="hero-gradient" style={{ padding: '7rem 2rem', textAlign: 'center', borderBottom: '1px solid var(--ops-border-color)' }}>
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+          <h1 style={{ fontWeight: '900', fontSize: '3.8rem', marginBottom: '1.5rem', color: 'var(--ops-heading-color)' }}>
             آکادمی تخصصی زیرساخت و DevOps
           </h1>
-          <p style={{ fontSize: '1.25rem', color: '#9ca3af', maxWidth: '800px', margin: '0 auto', lineHeight: '1.8' }}>
-            مرجع آموزش‌های سناریو محور و مبتنی بر محیط‌های پروداکشن واقعی.
+          <p style={{ fontSize: '1.25rem', color: 'var(--ops-text-color)', maxWidth: '800px', margin: '0 auto', lineHeight: '1.9' }}>
+            مرجع آموزش‌های سناریو محور و مبتنی بر چالش‌های محیط‌های پروداکشن واقعی.
+            <br/> این‌جا نقطه پایان تئوری‌ها و آغاز ورود به خط فرمان است.
           </p>
         </div>
       </header>
 
-      {/* بخش دوره‌ها */}
-      <main style={{ padding: '5rem 20px', maxWidth: '1100px', margin: '0 auto', direction: 'rtl' }}>
-        <h3 style={{ fontSize: '1.6rem', borderBottom: '2px solid var(--ifm-color-emphasis-200)', paddingBottom: '15px', marginBottom: '40px', color: 'var(--ops-heading-color)' }}>
+      {/* Courses Section (Removed forced inline RTL to let Docusaurus handle it) */}
+      <main style={{ padding: '5rem 20px', maxWidth: '1100px', margin: '0 auto' }}>
+        <h3 style={{ fontSize: '1.6rem', borderBottom: '2px solid var(--ops-border-color)', paddingBottom: '15px', marginBottom: '40px', color: 'var(--ops-heading-color)' }}>
           🧭 مسیرهای یادگیری
         </h3>
 
         <div className="course-row-container">
           
-          {/* ردیف اول: لینوکس */}
+          {/* Course 1: Linux RHCSA */}
           <div className="course-row">
             <div className="course-icon">🐧</div>
             <div className="course-details">
@@ -38,12 +40,12 @@ export default function Home() {
               </div>
             </div>
             <div className="course-action">
-              <div style={{color: '#06b6d4', fontWeight: 'bold', marginBottom: '12px', letterSpacing: '1px'}}>⚡ در حال برگزاری</div>
-              <Link to="/docs/rhcsa/topic-1-1" className="button button--primary button--lg" style={{width: '100%', borderRadius: '8px', boxShadow: '0 4px 15px rgba(139,92,246,0.4)'}}>ورود به دوره</Link>
+              <div style={{color: '#10b981', fontWeight: 'bold', marginBottom: '12px', letterSpacing: '1px'}}>⚡ در حال برگزاری</div>
+              <Link to="/docs/rhcsa/topic-1-1" className="button button--primary button--lg" style={{width: '100%', borderRadius: '8px'}}>ورود به دوره</Link>
             </div>
           </div>
 
-          {/* ردیف دوم: داکر */}
+          {/* Course 2: Docker */}
           <div className="course-row">
             <div className="course-icon">🐳</div>
             <div className="course-details">
@@ -53,12 +55,12 @@ export default function Home() {
               </div>
             </div>
             <div className="course-action">
-              <div style={{color: '#8b5cf6', fontWeight: 'bold', marginBottom: '12px'}}>⏳ به زودی...</div>
-              <span className="button button--secondary button--lg disabled" style={{width: '100%', borderRadius: '8px', opacity: 0.3}}>قفل است</span>
+              <div style={{color: '#6366f1', fontWeight: 'bold', marginBottom: '12px'}}>⏳ به زودی...</div>
+              <span className="button button--secondary button--lg disabled" style={{width: '100%', borderRadius: '8px', opacity: 0.5}}>قفل است</span>
             </div>
           </div>
 
-          {/* ردیف سوم: کوبرنیتیز */}
+          {/* Course 3: Kubernetes */}
           <div className="course-row">
             <div className="course-icon">☸️</div>
             <div className="course-details">
@@ -68,23 +70,8 @@ export default function Home() {
               </div>
             </div>
             <div className="course-action">
-              <div style={{color: '#8b5cf6', fontWeight: 'bold', marginBottom: '12px'}}>⏳ به زودی...</div>
-              <span className="button button--secondary button--lg disabled" style={{width: '100%', borderRadius: '8px', opacity: 0.3}}>قفل است</span>
-            </div>
-          </div>
-
-          {/* ردیف چهارم: هاشی‌کورپ */}
-          <div className="course-row">
-            <div className="course-icon">⚙️</div>
-            <div className="course-details">
-              <div className="course-title">جعبه‌ابزار HashiCorp</div>
-              <div className="course-desc">
-                اتوماسیون همه‌چیز! ورود به دنیای مدیریت زیرساخت به عنوان کد (IaC) با Terraform، مدیریت امن و متمرکز پسوردها با Vault و ایجاد یکپارچگی در سرویس‌ها با Consul.
-              </div>
-            </div>
-            <div className="course-action">
-              <div style={{color: '#8b5cf6', fontWeight: 'bold', marginBottom: '12px'}}>⏳ به زودی...</div>
-              <span className="button button--secondary button--lg disabled" style={{width: '100%', borderRadius: '8px', opacity: 0.3}}>قفل است</span>
+              <div style={{color: '#6366f1', fontWeight: 'bold', marginBottom: '12px'}}>⏳ به زودی...</div>
+              <span className="button button--secondary button--lg disabled" style={{width: '100%', borderRadius: '8px', opacity: 0.5}}>قفل است</span>
             </div>
           </div>
 

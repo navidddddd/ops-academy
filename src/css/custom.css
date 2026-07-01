@@ -7,7 +7,7 @@
   --ifm-font-family-base: 'Vazirmatn', Tahoma, sans-serif !important;
   --ifm-font-family-monospace: 'Fira Code', monospace !important;
   
-  /* Primary colors (Indigo/Purple blend) */
+  /* Primary colors */
   --ifm-color-primary: #6366f1;
   --ifm-color-primary-dark: #4f46e5;
   --ifm-color-primary-darker: #4338ca;
@@ -31,11 +31,10 @@
 }
 
 /* ======================================= */
-/* Typography & RTL Alignment */
+/* Typography & Justify text */
+/* (We DO NOT force direction: rtl here, Docusaurus handles it natively) */
 /* ======================================= */
 body, .markdown {
-  direction: rtl;
-  text-align: right;
   color: var(--ops-text-color);
 }
 
@@ -56,7 +55,7 @@ body, .markdown {
 /* ======================================= */
 /* Strict LTR for Code Blocks */
 /* ======================================= */
-div[class*="codeBlockContainer"], pre, .prism-code {
+.markdown pre, div[class*="codeBlockContainer_"] {
   direction: ltr !important;
   text-align: left !important;
   border: 1px solid var(--ops-border-color);
@@ -90,6 +89,7 @@ code {
 
 /* ======================================= */
 /* Landing Page Custom Components */
+/* Using logical properties (inline-start) instead of left/right */
 /* ======================================= */
 .hero-gradient {
   background: linear-gradient(135deg, var(--ifm-background-color) 0%, var(--ifm-background-surface-color) 100%);
@@ -97,19 +97,12 @@ code {
   overflow: hidden;
 }
 
-.hero-gradient::before {
-  content: '';
-  position: absolute;
-  top: -50%; right: -50%; width: 200%; height: 200%;
-  background: radial-gradient(circle, rgba(99,102,241,0.05) 0%, transparent 50%);
-  z-index: 0;
-}
-
 .course-row-container { display: flex; flex-direction: column; gap: 1.5rem; }
 
 .course-row {
   display: flex;
   align-items: center;
+  gap: 2rem;
   background-color: var(--ifm-background-surface-color);
   border: 1px solid var(--ops-border-color);
   border-radius: 16px;
@@ -129,17 +122,26 @@ code {
   background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(6,182,212,0.1) 100%);
   border-radius: 24px;
   display: flex; align-items: center; justify-content: center;
-  margin-left: 2rem; flex-shrink: 0;
+  flex-shrink: 0;
 }
 
-.course-details { flex-grow: 1; text-align: right; }
+.course-details { 
+  flex-grow: 1; 
+  text-align: start; 
+}
+
 .course-title { font-size: 1.6rem; font-weight: 900; color: var(--ops-heading-color); margin-bottom: 0.5rem; }
 .course-desc { font-size: 1.05rem; color: var(--ops-text-color); line-height: 1.8; }
-.course-action { min-width: 200px; text-align: center; border-right: 1px solid var(--ops-border-color); padding-right: 1.5rem; }
+
+.course-action { 
+  min-width: 200px; 
+  text-align: center; 
+  border-inline-start: 1px solid var(--ops-border-color); 
+  padding-inline-start: 1.5rem; 
+}
 
 @media (max-width: 768px) {
-  .course-row { flex-direction: column; text-align: center; }
-  .course-icon { margin-left: 0; margin-bottom: 1rem; }
-  .course-details { text-align: center; margin-bottom: 1.5rem; }
-  .course-action { border-right: none; padding-right: 0; border-top: 1px solid var(--ops-border-color); padding-top: 1.5rem; width: 100%; }
+  .course-row { flex-direction: column; text-align: center; gap: 1rem; }
+  .course-details { text-align: center; margin-bottom: 1rem; }
+  .course-action { border-inline-start: none; padding-inline-start: 0; border-top: 1px solid var(--ops-border-color); padding-top: 1.5rem; width: 100%; }
 }
