@@ -69,7 +69,24 @@ const config = {
       },
       footer: {
         style: 'dark',
-        copyright: `ساخته شده با ❤️ | تمام حقوق برای Ops Academy محفوظ است © ${new Date().getFullYear()}`,
+        links: [
+          {
+            title: 'مسیرهای یادگیری',
+            items: [
+              { label: '🐧 مسیر جامع Linux RHCSA', to: '/docs/rhcsa/topic-1-1' },
+              { label: '🐳 دوره CNCF Docker', to: '#' },
+              { label: '☸️ دوره Kubernetes CKA', to: '#' },
+            ],
+          },
+          {
+            title: 'جامعه مهندسی',
+            items: [
+              { label: 'GitHub', href: 'https://github.com/navidddddd' },
+              { label: 'LinkedIn', href: '#' },
+            ],
+          },
+        ],
+        copyright: `Ops Academy © ${new Date().getFullYear()} | Engineered with ❤️ for DevOps Professionals`,
       },
       prism: {
         theme: prismThemes.github,
