@@ -5,126 +5,97 @@
   --ifm-font-family-base: 'Vazirmatn', Tahoma, sans-serif !important;
   --ifm-font-family-monospace: 'Fira Code', monospace !important;
   
-  --ifm-color-primary: #3b82f6;
-  --ifm-color-primary-dark: #2563eb;
-  --ifm-color-primary-darker: #1d4ed8;
-  --ifm-color-primary-darkest: #1e3a8a;
+  /* رنگ اصلی: بنفش نئونی (Neon Violet) */
+  --ifm-color-primary: #8b5cf6;
+  --ifm-color-primary-dark: #7c3aed;
+  --ifm-color-primary-darker: #6d28d9;
+  --ifm-color-primary-darkest: #4c1d95;
+  --ifm-color-primary-light: #a78bfa;
+  --ifm-color-primary-lighter: #c4b5fd;
+  
+  --ops-heading-color: #111827;
 }
 
 [data-theme='dark'] {
-  --ifm-background-color: #0b1121; 
-  --ifm-background-surface-color: #162032;
-  --ifm-color-content: #cbd5e1;
-  --ifm-heading-color: #f8fafc;
+  /* پس‌زمینه: مشکی تاریک و طوسی بسیار عمیق */
+  --ifm-background-color: #030712; 
+  --ifm-background-surface-color: #111827;
+  --ifm-color-content: #d1d5db;
+  --ifm-color-content-secondary: #9ca3af;
+  --ifm-color-emphasis-200: #1f2937;
+  --ops-heading-color: #f9fafb;
 }
 
-/* ۱. اصلاح رنگ تیترها (هماهنگ با تم تاریک و روشن) */
-.markdown h1 { font-size: 1.8rem !important; margin-bottom: 1.5rem; font-weight: 900; }
-.markdown h2 { font-size: 1.4rem !important; margin-top: 2.5rem; border-bottom: 1px solid var(--ifm-color-emphasis-200); padding-bottom: 8px; }
-.markdown h3 { font-size: 1.2rem !important; margin-top: 2rem; color: var(--ifm-color-primary); }
+/* ======================================= */
+/* تیترها و متون درس */
+.markdown h1, .markdown h2, .markdown h3, .markdown h4 { color: var(--ops-heading-color) !important; }
+.markdown h1 { font-size: 1.9rem !important; margin-bottom: 1.5rem; font-weight: 900; }
+.markdown h2 { font-size: 1.5rem !important; margin-top: 2.5rem; border-bottom: 1px solid var(--ifm-color-emphasis-200); padding-bottom: 10px; }
+.markdown p, .markdown li { font-size: 1.1rem; line-height: 2.1; text-align: justify; }
 
-[data-theme='dark'] .markdown h1, 
-[data-theme='dark'] .markdown h2 { color: #f8fafc; }
-[data-theme='dark'] .markdown h3 { color: #60a5fa; }
-
-/* ۲. جاستیفای شدن کامل متن‌ها */
-.markdown p, .markdown li { 
-    font-size: 1.05rem; 
-    line-height: 2; 
-    text-align: justify; 
-    text-justify: inter-word;
-}
-
-/* ۳. چپ‌چین شدن قطعی تمام کدهای برنامه‌نویسی */
-code, pre, .prism-code, .prism-code * {
+/* ======================================= */
+/* استایل کدهای لینوکس (شبیه به ترمینال هکرها) */
+div[class*="codeBlockContainer"], pre, .prism-code {
     direction: ltr !important;
     text-align: left !important;
-    unicode-bidi: isolate !important;
+    border: 1px solid var(--ifm-color-emphasis-200);
+    border-radius: 8px;
 }
 code {
-    display: inline-block; 
-    margin: 0 3px;
-    padding: 2px 6px !important;
+    direction: ltr !important;
+    unicode-bidi: isolate !important;
     font-size: 0.9em !important;
-    background-color: var(--ifm-color-primary-lightest) !important;
-    color: var(--ifm-color-primary-darkest) !important;
-    border-radius: 4px;
+    padding: 3px 8px !important;
+    border-radius: 6px;
+    background-color: rgba(139, 92, 246, 0.1) !important;
+    color: var(--ifm-color-primary) !important;
+    border: 1px solid rgba(139, 92, 246, 0.2);
 }
 [data-theme='dark'] code {
-    background-color: rgba(59, 130, 246, 0.1) !important;
-    color: #93c5fd !important;
-}
-pre code {
-    background-color: transparent !important;
-    color: inherit !important;
-    display: block;
+    color: #c4b5fd !important;
 }
 
-/* ۴. دکمه‌های ناوبری: حذف اسم درس و نمایش بزرگ "قبلی/بعدی" */
-.pagination-nav__label { display: none !important; }
-.pagination-nav__sublabel { 
-    font-size: 1.1rem !important; 
-    font-weight: 900 !important; 
-    color: var(--ifm-color-primary) !important; 
-    margin: 0 !important;
-}
+/* ======================================= */
+/* ناوبری */
+.pagination-nav__link .pagination-nav__label { display: none !important; }
+.pagination-nav__link .pagination-nav__sublabel { font-size: 1.3rem !important; font-weight: 900 !important; color: var(--ifm-color-primary) !important; margin: 0 !important; }
 
-/* ۵. استایل صفحه اصلی (ردیف‌های کامل و عریض) */
+/* ======================================= */
+/* کارت‌های صفحه اصلی (با افکت Glow و Glassmorphism) */
+.course-row-container { display: flex; flex-direction: column; gap: 1.5rem; direction: rtl; }
 .course-row {
     display: flex;
     align-items: center;
-    background-color: var(--ifm-background-surface-color);
+    background-color: rgba(17, 24, 39, 0.6);
+    backdrop-filter: blur(12px);
     border: 1px solid var(--ifm-color-emphasis-200);
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 2rem;
-    margin-bottom: 1.5rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    direction: rtl;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 .course-row:hover {
-    transform: translateX(-5px);
+    transform: translateY(-5px) scale(1.01);
     border-color: var(--ifm-color-primary);
-    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 15px 30px -10px rgba(139, 92, 246, 0.3); /* درخشش بنفش */
+    background-color: rgba(17, 24, 39, 0.8);
 }
 .course-icon {
-    font-size: 3.5rem;
-    margin-left: 2rem;
-    background: rgba(59,130,246,0.1);
-    width: 100px;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 20px;
-    flex-shrink: 0;
+    font-size: 3.2rem; width: 90px; height: 90px;
+    background: linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(6,182,212,0.1) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 24px;
+    display: flex; align-items: center; justify-content: center;
+    margin-left: 2rem; flex-shrink: 0;
 }
-.course-content {
-    flex-grow: 1;
-    text-align: right;
-}
-.course-title {
-    font-size: 1.5rem;
-    font-weight: 900;
-    color: var(--ifm-heading-color);
-    margin-bottom: 0.5rem;
-}
-.course-desc {
-    color: var(--ifm-color-content-secondary);
-    font-size: 1.05rem;
-    line-height: 1.8;
-    margin-bottom: 1rem;
-}
-.course-action {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 15px;
-    min-width: 250px;
-}
+.course-details { flex-grow: 1; text-align: right; }
+.course-title { font-size: 1.6rem; font-weight: 900; color: var(--ops-heading-color); margin-bottom: 0.5rem; }
+.course-desc { font-size: 1.05rem; color: var(--ifm-color-content-secondary); line-height: 1.8; }
+.course-action { min-width: 200px; text-align: center; border-right: 1px solid var(--ifm-color-emphasis-200); padding-right: 1.5rem; }
+
 @media (max-width: 768px) {
     .course-row { flex-direction: column; text-align: center; }
-    .course-icon { margin-left: 0; margin-bottom: 1.5rem; }
-    .course-content { text-align: center; }
-    .course-action { justify-content: center; margin-top: 1.5rem; }
+    .course-icon { margin-left: 0; margin-bottom: 1rem; }
+    .course-details { text-align: center; margin-bottom: 1.5rem; }
+    .course-action { border-right: none; padding-right: 0; border-top: 1px solid var(--ifm-color-emphasis-200); padding-top: 1.5rem; width: 100%; }
 }

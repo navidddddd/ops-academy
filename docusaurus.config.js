@@ -4,7 +4,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 const config = {
   title: 'Ops Academy 🚀',
   tagline: 'پایگاه دانش مهندسی زیرساخت و DevOps',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/logo.svg', // لوگوی جدید به عنوان فاوآیکون ست شد
 
   url: 'https://ops-academy.ir',
   baseUrl: '/',
@@ -14,7 +14,6 @@ const config = {
   onBrokenLinks: 'ignore',
   onBrokenMarkdownLinks: 'warn',
 
-  // این بخش جادوی راست‌چین (RTL) و فارسی‌سازی است
   i18n: {
     defaultLocale: 'fa',
     locales: ['fa'],
@@ -33,7 +32,7 @@ const config = {
         docs: {
           sidebarPath: './sidebars.js',
         },
-        blog: false, // بخش بلاگ را فعلا غیرفعال کردیم
+        blog: false,
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -45,12 +44,15 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       colorMode: {
-        defaultMode: 'dark', // دارک مود پیش‌فرض شد
+        defaultMode: 'dark', // دارک مود پیش‌فرض
         disableSwitch: false,
       },
       navbar: {
-        title: 'Ops Academy 🚀',
-        /* بخش logo از اینجا حذف شد تا دایناسور محو شود */
+        title: 'Ops Academy',
+        logo: {
+          alt: 'Ops Academy Logo',
+          src: 'img/logo.svg', // لوگوی جدید در هدر سایت قرار گرفت
+        },
         items: [
           {
             type: 'docSidebar',
@@ -58,13 +60,20 @@ const config = {
             position: 'right',
             label: 'مسیر لینوکس (RHCSA)',
           },
+          {
+            href: 'https://github.com/navidddddd',
+            label: 'GitHub',
+            position: 'left',
+          },
+        ],
+      },
       footer: {
         style: 'dark',
         copyright: `ساخته شده با ❤️ | تمام حقوق برای Ops Academy محفوظ است © ${new Date().getFullYear()}`,
       },
       prism: {
         theme: prismThemes.github,
-        darkTheme: prismThemes.dracula, // تم کدهای برنامه‌نویسی جذاب شد
+        darkTheme: prismThemes.dracula,
       },
     }),
 };
