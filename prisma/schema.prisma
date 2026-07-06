@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Connection URLs have been moved to prisma.config.ts according to Prisma 7+ standards
+}
+
+// User model for authentication and profiles
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  progress  UserProgress[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// Course model (e.g., HTML, CSS, JavaScript)
+model Course {
+  id          String   @id @default(uuid())
+  title       String   // e.g., "HTML Tutorial"
+  slug        String   @unique // SEO-friendly URL: "html"
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  lessons     Lesson[]
+}
+
+// Lesson model representing individual tutorial pages
+model Lesson {
+  id        String   @id @default(uuid())
+  title     String   // e.g., "HTML Introduction"
+  slug      String   @unique // SEO-friendly URL: "html-intro"
+  contentId String?  // Reference to MDX file name or identifier
+  order     Int      // To sort lessons sequentially in the sidebar menu
+  courseId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  course    Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress  UserProgress[]
+
+  // Database indexes for faster read operations and SEO routing
+  @@index([courseId])
+  @@index([slug]) 
+}
+
+// Tracks which user has completed which lesson
+model UserProgress {
+  id        String   @id @default(uuid())
+  userId    String
+  lessonId  String
+  completed Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  // Ensure a user can only have one progress record per lesson
+  @@unique([userId, lessonId])
+  @@index([userId])
+}

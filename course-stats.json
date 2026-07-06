@@ -1,0 +1,18 @@
+{
+  "rhcsa": {
+    "views": 1546,
+    "students": 486
+  },
+  "cnfc-docker": {
+    "views": 976,
+    "students": 311
+  },
+  "hasicorp": {
+    "views": 622,
+    "students": 151
+  },
+  "sre": {
+    "views": 414,
+    "students": 95
+  }
+}
