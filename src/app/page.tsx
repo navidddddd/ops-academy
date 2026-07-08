@@ -5,6 +5,7 @@ import { getDynamicCoursesData, Course } from "@/lib/mdx";
 import { getCourseStats, getTotalGlobalStats } from "@/lib/stats";
 
 import TechStack from "@/components/TechStack";
+import LearningPaths from "@/components/LearningPaths";
 import Features from "@/components/Features";
 
 // Force Next.js to always fetch fresh data dynamically on every request (No SSR Caching)
@@ -196,6 +197,9 @@ export default async function HomePage() {
       </section>
 
       <TechStack />
+
+      {/* 🚀 New Learning Paths Section */}
+      <LearningPaths />
 
       {/* 🌟 TRENDING COURSES SECTION (Top 10 Bento Grid) */}
       <section id="trending-courses" className="max-w-6xl mx-auto px-6 py-12">
