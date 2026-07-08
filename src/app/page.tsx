@@ -6,6 +6,9 @@ import { getCourseStats, getTotalGlobalStats } from "@/lib/stats";
 import TechStack from "@/components/TechStack";
 import Features from "@/components/Features";
 
+// Force Next.js to always fetch fresh data dynamically on every request (No SSR Caching)
+export const revalidate = 0;
+
 // Strict Technical SEO: Configuration for static page metadata
 export const metadata: Metadata = {
   title: "اپس‌آکادمی | مرجع تخصصی آموزش لینوکس، دواپس و زیرساخت",

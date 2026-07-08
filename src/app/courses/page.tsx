@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   },
 };
 
+// Ensure real-time stats update by disabling static caching for this page
+export const revalidate = 0;
+
 export default async function CoursesPage() {
   // 1. Fetch all course data statically
   const courses = getDynamicCoursesData();
