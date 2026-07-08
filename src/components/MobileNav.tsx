@@ -8,10 +8,11 @@ export default function MobileNav() {
 
   return (
     <div className="md:hidden">
-      {/* دکمه همبرگری هدر */}
+      {/* Hamburger Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="text-slate-600 p-2 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors"
+        aria-label="Toggle Menu"
       >
         <svg
           className="w-6 h-6"
@@ -28,22 +29,36 @@ export default function MobileNav() {
         </svg>
       </button>
 
-      {/* لیست کشویی لینک‌ها در موبایل */}
+      {/* Dropdown Menu Links */}
       {isOpen && (
         <div className="absolute top-full left-0 w-full bg-white border-b border-slate-200 p-6 flex flex-col gap-6 shadow-xl z-50 animate-in slide-in-from-top-2">
           <Link
             href="/"
             onClick={() => setIsOpen(false)}
-            className="font-bold text-slate-700 text-lg"
+            className="font-bold text-slate-700 text-lg hover:text-blue-600 transition-colors"
           >
             صفحه اصلی
           </Link>
           <Link
-            href="/#courses"
+            href="/courses"
             onClick={() => setIsOpen(false)}
-            className="font-bold text-slate-700 text-lg"
+            className="font-bold text-slate-700 text-lg hover:text-blue-600 transition-colors"
           >
             دوره‌ها
+          </Link>
+          <Link
+            href="/about"
+            onClick={() => setIsOpen(false)}
+            className="font-bold text-slate-700 text-lg hover:text-blue-600 transition-colors"
+          >
+            درباره ما
+          </Link>
+          <Link
+            href="/contact"
+            onClick={() => setIsOpen(false)}
+            className="font-bold text-slate-700 text-lg hover:text-blue-600 transition-colors"
+          >
+            تماس با ما
           </Link>
         </div>
       )}

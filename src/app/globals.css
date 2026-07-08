@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Enable smooth scrolling globally for all anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
 /* 🌟 حل قطعی مشکل فونت: اعمال فونت وزیرمتن به کل سایت 🌟 */
 html,
 body {

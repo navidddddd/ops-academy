@@ -48,7 +48,7 @@ export default function Header() {
               صفحه اصلی
             </Link>
             <Link
-              href="/#courses"
+              href="/courses"
               className="hover:text-slate-900 transition-colors"
             >
               دوره‌ها
