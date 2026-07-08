@@ -14,14 +14,15 @@ interface LearningPath {
   steps: PathStep[];
 }
 
-// Static data for our DevOps and Cloud roadmaps (Translated to Persian)
+// Static data for our DevOps and Cloud roadmaps (Direct routes to courses)
 const roadmaps: LearningPath[] = [
   {
     id: "linux-foundation",
     title: "لینوکس و مدیریت سیستم",
     description:
       "تسلط بر سیستم‌عامل پایه. مهارتی کاملاً ضروری برای هر مهندس دواپس و پیش‌نیاز اصلی آزمون RHCSA.",
-    href: "/courses#linux",
+    // Direct link to the RHCSA course based on your content folder
+    href: "/learn/rhcsa",
     steps: [
       { name: "دستورات پایه" },
       { name: "مدیریت کاربران" },
@@ -34,7 +35,8 @@ const roadmaps: LearningPath[] = [
     title: "کانتینرسازی (Docker)",
     description:
       "یادگیری پکیج کردن و اجرای برنامه‌ها در هر محیطی با استفاده از داکر (Docker) و پادمن (Podman).",
-    href: "/courses#containers",
+    // Direct link to the Docker/Containers course
+    href: "/learn/cnfc-docker",
     steps: [
       { name: "مفاهیم پایه داکر" },
       { name: "ایمیج‌ها و والیوم‌ها" },
@@ -47,7 +49,8 @@ const roadmaps: LearningPath[] = [
     title: "کوبرنتیز و ارکستریشن",
     description:
       "مدیریت و مقیاس‌پذیری حرفه‌ای کانتینرها؛ قلب تپنده زیرساخت‌های مدرن ابری (Cloud Native).",
-    href: "/courses#kubernetes",
+    // Linked to cnfc-docker as Kubernetes is part of the CKA course in your screenshot
+    href: "/learn/cnfc-docker",
     steps: [
       { name: "معماری K8s" },
       { name: "پادها و دیپلویمنت‌ها" },
@@ -60,7 +63,8 @@ const roadmaps: LearningPath[] = [
     title: "تجربیات CI/CD و SRE",
     description:
       "اتوماسیون همه‌جانبه و تضمین پایداری سیستم. شامل زیرساخت به عنوان کد (IaC) و مانیتورینگ.",
-    href: "/courses#sre",
+    // Direct link to the SRE / CI-CD course
+    href: "/learn/sre",
     steps: [
       { name: "مفاهیم GitOps" },
       { name: "گیت‌هاب اکشنز / گیت‌لب CI" },
@@ -98,7 +102,7 @@ export default function LearningPaths() {
               key={path.id}
               className="relative flex flex-col bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50 hover:border-blue-500/50 hover:bg-slate-800 transition-all duration-300 group mt-4 md:mt-0"
             >
-              {/* Step Number Badge (Adjusted for RTL context: -right-4) */}
+              {/* Step Number Badge */}
               <div className="absolute -top-4 -right-4 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg border-4 border-slate-900 shadow-sm">
                 {index + 1}
               </div>
@@ -118,7 +122,6 @@ export default function LearningPaths() {
                     key={stepIndex}
                     className="flex items-center text-sm text-slate-300"
                   >
-                    {/* Adjusted margin for RTL context: ml-2 */}
                     <span
                       className="w-1.5 h-1.5 rounded-full bg-blue-500 ml-2 flex-shrink-0"
                       aria-hidden="true"
@@ -128,13 +131,12 @@ export default function LearningPaths() {
                 ))}
               </ul>
 
-              {/* Action Link (Adjusted icon direction and hover animation for RTL) */}
+              {/* Action Link - Now strictly routing to /learn/[course_id] */}
               <Link
                 href={path.href}
                 className="inline-flex items-center text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors mt-auto group-hover:-translate-x-1 duration-200 w-max"
               >
                 شروع یادگیری
-                {/* RTL Arrow (Pointing Left) */}
                 <svg
                   className="w-4 h-4 mr-1"
                   fill="none"
