@@ -1,3 +1,4 @@
+// src/components/Footer.tsx
 import Link from "next/link";
 import { getDynamicCoursesData } from "@/lib/mdx";
 
@@ -5,7 +6,7 @@ export default function Footer() {
   const courses = getDynamicCoursesData();
   const currentYear = new Date().getFullYear();
 
-  // مرتب‌سازی دوره‌ها بر اساس بیشترین بازدید (views) و انتخاب ۵ تای اول
+  // Sort courses based on views and select the top 5
   const popularCourses = [...courses]
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 5);
@@ -22,7 +23,6 @@ export default function Footer() {
               href="/"
               className="flex items-center gap-2.5 group shrink-0 w-max"
             >
-              {/* 👈 دقیقاً همان SVG هدر قرار داده شد */}
               <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20 transition-transform group-hover:scale-105 shrink-0">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -39,7 +39,6 @@ export default function Footer() {
                 </svg>
               </div>
 
-              {/* استایل متن هم دقیقاً شبیه هدر شد */}
               <div className="flex flex-col">
                 <span className="font-black text-xl tracking-tight text-white leading-none">
                   Ops<span className="text-blue-500">Academy</span>
@@ -93,14 +92,21 @@ export default function Footer() {
                   همه دوره‌ها
                 </Link>
               </li>
+              {/* Added About and Contact Links, removed Labs */}
               <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  آزمایشگاه‌های عملی
+                <Link
+                  href="/about"
+                  className="hover:text-white transition-colors"
+                >
+                  درباره ما
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  درباره ما
+                <Link
+                  href="/contact"
+                  className="hover:text-white transition-colors"
+                >
+                  تماس با ما
                 </Link>
               </li>
             </ul>
@@ -116,10 +122,14 @@ export default function Footer() {
             <span>تمامی حقوق محفوظ است.</span>
           </div>
           <div className="flex items-center gap-6 text-slate-500 text-xs font-medium">
-            <Link href="#" className="hover:text-white transition-colors">
+            {/* Added Links to Legal Pages */}
+            <Link href="/terms" className="hover:text-white transition-colors">
               قوانین و مقررات
             </Link>
-            <Link href="#" className="hover:text-white transition-colors">
+            <Link
+              href="/privacy"
+              className="hover:text-white transition-colors"
+            >
               حریم خصوصی
             </Link>
           </div>

@@ -1,7 +1,8 @@
+// src/components/Header.tsx
 import Link from "next/link";
 import { getAllSearchableLessons } from "@/lib/mdx";
 import SearchBox from "./SearchBox";
-import MobileNav from "./MobileNav"; // 👈 ایمپورت کامپوننت جدید
+import MobileNav from "./MobileNav";
 
 export default function Header() {
   const searchIndex = getAllSearchableLessons();
@@ -41,7 +42,7 @@ export default function Header() {
         </div>
 
         <div className="flex items-center justify-end gap-6">
-          {/* نویگیشن دسکتاپ */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8 text-sm font-bold text-slate-500">
             <Link href="/" className="hover:text-blue-600 transition-colors">
               صفحه اصلی
@@ -52,12 +53,22 @@ export default function Header() {
             >
               دوره‌ها
             </Link>
-            <Link href="#" className="hover:text-slate-900 transition-colors">
-              آزمایشگاه‌ها
+            {/* Added About and Contact Links */}
+            <Link
+              href="/about"
+              className="hover:text-slate-900 transition-colors"
+            >
+              درباره ما
+            </Link>
+            <Link
+              href="/contact"
+              className="hover:text-slate-900 transition-colors"
+            >
+              تماس با ما
             </Link>
           </nav>
 
-          {/* 👈 نویگیشن موبایل */}
+          {/* Mobile Navigation */}
           <MobileNav />
         </div>
       </div>

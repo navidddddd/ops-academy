@@ -45,13 +45,6 @@ export default function MobileNav() {
           >
             دوره‌ها
           </Link>
-          <Link
-            href="#"
-            onClick={() => setIsOpen(false)}
-            className="font-bold text-slate-700 text-lg"
-          >
-            آزمایشگاه‌ها
-          </Link>
         </div>
       )}
     </div>
