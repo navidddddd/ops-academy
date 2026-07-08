@@ -9,14 +9,15 @@ import rehypeSlug from "rehype-slug";
 import CopyablePre from "@/components/CopyablePre";
 import TableOfContents from "@/components/TableOfContents";
 import ViewTracker from "@/components/ViewTracker";
-import CourseStats from "@/components/CourseStats"; // <-- 1. Imported the new component
 import { Metadata } from "next";
 
 type PageProps = {
   params: Promise<{ course: string; slug: string }>;
 };
 
-// ... (Generate Metadata function remains exactly the same)
+// ============================================================================
+// Generate Dynamic SEO Metadata
+// ============================================================================
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
@@ -50,39 +51,35 @@ export async function generateMetadata({
   };
 }
 
+// ============================================================================
+// Main Server Component
+// ============================================================================
 export default async function LessonPage({ params }: PageProps) {
   const { course, slug } = await params;
 
   const source = await getLessonContent(course, slug);
   if (!source) notFound();
 
-  // 1. Fetch raw title and clean it (removes leading numbers, dots, and spaces)
+  // 1. Fetch raw title and clean it
+  // Added Persian digits (۰-۹) to the regex so it perfectly cleans titles like "۰. نمای کلی"
   const rawTitle = source.match(/title:\s*"(.*?)"/)?.[1] || "آموزش تخصصی";
-  const cleanTitle = rawTitle.replace(/^[\d\.\-\s]+/, ""); // e.g., "0. Intro" -> "Intro"
+  const cleanTitle = rawTitle.replace(/^[\d۰-۹\.\-\s]+/, "");
 
   const description = source.match(/description:\s*"(.*?)"/)?.[1] || "";
 
-  // 2. Extract reading time as a clean number (extracts only digits)
-  const rawReadingTime = source.match(/readingTime:\s*"(.*?)"/)?.[1] || "10";
-  const readingTimeMatch = rawReadingTime.match(/\d+/);
-  const readingTimeMinutes = readingTimeMatch
-    ? parseInt(readingTimeMatch[0], 10)
-    : 10;
-
+  // 2. Setup lesson navigation (Prev/Next)
   const allLessons = getCourseLessons(course);
   const currentIndex = allLessons.findIndex((lesson) => lesson.slug === slug);
   const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
   const nextLesson =
     currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
 
-  // Placeholder for Prisma views
-  const fetchedViews = 1250;
-
   return (
     <div
       className="flex flex-col lg:flex-row items-start max-w-[1400px] mx-auto w-full gap-8 px-6 py-8"
       dir="rtl"
     >
+      {/* Dynamic JSON-LD Schema for Technical SEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -99,33 +96,30 @@ export default async function LessonPage({ params }: PageProps) {
         }}
       />
 
+      {/* Tracks page views in the background */}
       <ViewTracker courseId={course} />
 
       <article className="flex-1 min-w-0 prose prose-slate prose-img:rounded-xl max-w-4xl mx-auto transition-colors duration-300">
-        {/* 🎯 Clean Title and Conditionally Rendered Stats */}
         <header className="mb-10 not-prose border-b border-slate-200 dark:border-slate-700/50 pb-6 transition-colors">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 mb-4 leading-tight">
             {cleanTitle}
           </h1>
 
           {description && (
-            <p className="text-slate-600 dark:text-slate-400 text-lg mb-6 leading-relaxed">
+            <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
               {description}
             </p>
-          )}
-
-          {/* Only show stats if this is the FIRST lesson of the course */}
-          {currentIndex === 0 && (
-            <CourseStats
-              views={fetchedViews}
-              readingTimeMinutes={readingTimeMinutes}
-            />
           )}
         </header>
 
         <MDXRemote
           source={source}
-          components={{ pre: CopyablePre }}
+          components={{
+            pre: CopyablePre,
+            // Automatically hide any H1 tags inside the MDX content to prevent duplication
+            // since we already render the frontmatter title in the page header.
+            h1: () => null,
+          }}
           options={{
             parseFrontmatter: true,
             mdxOptions: {
@@ -138,6 +132,7 @@ export default async function LessonPage({ params }: PageProps) {
           }}
         />
 
+        {/* Navigation Footer */}
         <div className="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-row justify-between items-center not-prose transition-colors duration-300">
           <div className="w-1/2 flex justify-start">
             {prevLesson && (
@@ -162,6 +157,7 @@ export default async function LessonPage({ params }: PageProps) {
         </div>
       </article>
 
+      {/* Sticky Table of Contents Sidebar */}
       <aside className="hidden xl:block w-64 shrink-0 sticky top-[100px] h-[calc(100vh-120px)] overflow-y-auto pb-10">
         <TableOfContents />
       </aside>
