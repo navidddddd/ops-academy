@@ -1,8 +1,5 @@
-// src/app/page.tsx
-
 import Link from "next/link";
 import { Metadata } from "next";
-// Imported 'Course' interface to enforce strict typing across the component
 import { getDynamicCoursesData, Course } from "@/lib/mdx";
 import { getCourseStats, getTotalGlobalStats } from "@/lib/stats";
 
@@ -20,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "اپس‌آکادمی | مهندسی زیرساخت را در سطح Production بیاموزید",
     description:
-      "با تئوری‌های خسته‌کننده خداحافظی کنید. تخصص‌های ابری را از طریق مستندات استاندارد و آزمایشگاه‌های واقعی یاد بگیرید.",
+      "با تئوری‌های خسته‌کننده خداحافظی کنید. تخصص‌های ابری را از طریق مستندات استاندارد و سناریوهای واقعی یاد بگیرید.",
     url: "https://ops-academy.ir",
     siteName: "OpsAcademy",
     locale: "fa_IR",
@@ -28,7 +25,6 @@ export const metadata: Metadata = {
   },
 };
 
-// Premium Copywriting for FAQs targeting technical audience pain points
 const FAQS = [
   {
     q: "آیا این دوره‌ها برای افراد کاملاً مبتدی مناسب است؟",
@@ -40,29 +36,29 @@ const FAQS = [
   },
   {
     q: "آیا برای انجام سناریوها به سرورهای گران‌قیمت نیاز دارم؟",
-    a: "به هیچ‌وجه. معماری آموزش‌های ما به گونه‌ای است که تمامی آزمایشگاه‌ها، از پیکربندی‌های پایه شبکه تا راه‌اندازی کلاسترها، با حداقل منابع روی لپ‌تاپ شخصی شما (با استفاده از WSL یا VirtualBox) قابل اجرا هستند.",
+    a: "به هیچ‌وجه. معماری آموزش‌های ما به گونه‌ای است که تمامی سناریوها، از پیکربندی‌های پایه شبکه تا راه‌اندازی کلاسترها، با حداقل منابع روی لپ‌تاپ شخصی شما (با استفاده از WSL یا VirtualBox) قابل اجرا هستند.",
   },
 ];
 
 export default async function HomePage() {
   const courses = getDynamicCoursesData();
-
-  // Sort courses based on their pre-defined order to maintain structural sequence
-  const sortedCourses = [...courses].sort(
-    (a, b) => (a.order || 99) - (b.order || 99),
-  );
-
   const { totalViews, totalStudents } = await getTotalGlobalStats();
 
-  // Concurrent data fetching for individual course database statistics
+  // 1. Fetch stats for all courses concurrently
   const coursesWithStats = await Promise.all(
-    sortedCourses.map(async (course) => {
+    courses.map(async (course) => {
       const stats = await getCourseStats(course.id);
       return { ...course, stats };
     }),
   );
 
-  // Technical SEO: Generating Structured Data (JSON-LD) for Rich Snippets
+  // 2. Sort by views (descending) to find the most popular courses
+  // 3. Slice the array to get only the top 10 items for the homepage
+  const trendingCourses = coursesWithStats
+    .sort((a, b) => (b.stats?.views || 0) - (a.stats?.views || 0))
+    .slice(0, 10);
+
+  // Technical SEO: Generating Structured Data (JSON-LD)
   const jsonLdData = {
     "@context": "https://schema.org",
     "@graph": [
@@ -77,7 +73,7 @@ export default async function HomePage() {
           },
         })),
       },
-      ...coursesWithStats.map((course) => ({
+      ...trendingCourses.map((course) => ({
         "@type": "Course",
         "@id": `https://ops-academy.ir/learn/${course.id}`,
         name: course.title,
@@ -96,13 +92,13 @@ export default async function HomePage() {
       className="bg-slate-50 text-slate-800 selection:bg-blue-600 selection:text-white overflow-x-hidden"
       dir="rtl"
     >
-      {/* Injecting Structured Data into the Document Head for Search Engines */}
+      {/* JSON-LD Script for SEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData) }}
       />
 
-      {/* Hero Section - High-Impact Copywriting */}
+      {/* Hero Section */}
       <section className="relative pt-24 pb-20 px-6 text-center overflow-hidden bg-white border-b border-slate-100">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[300px] bg-gradient-to-b from-blue-500/5 to-transparent blur-3xl pointer-events-none" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none opacity-80" />
@@ -120,16 +116,16 @@ export default async function HomePage() {
           </h1>
           <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
             با تئوری‌های خسته‌کننده خداحافظی کنید. در اپس‌آکادمی، از طریق
-            مستندات تعاملی، کدهای استاندارد و آزمایشگاه‌های مبتنی بر سناریوهای
-            واقعی، تخصص‌هایی نظیر Linux، Containers و CI/CD را کاملاً عملیاتی
-            مسلط شوید.
+            مستندات تعاملی، کدهای استاندارد و سناریوهای مبتنی بر چالش‌های واقعی،
+            تخصص‌هایی نظیر Linux، Containers و CI/CD را کاملاً عملیاتی مسلط
+            شوید.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <a
-              href="#courses"
+            <Link
+              href="/courses"
               className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-base transition-all shadow-lg shadow-blue-600/20 hover:-translate-y-1 hover:shadow-blue-600/30 flex items-center justify-center gap-2"
             >
-              شروع مسیر مهندسی
+              مشاهده تمامی دوره‌ها
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -143,7 +139,7 @@ export default async function HomePage() {
                   d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -175,7 +171,7 @@ export default async function HomePage() {
               +۵۰ سناریو
             </div>
             <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-              آزمایشگاه عملیاتی
+              سناریوی عملیاتی
             </div>
           </div>
           <div>
@@ -188,23 +184,41 @@ export default async function HomePage() {
       </section>
 
       <TechStack />
-      <Features />
 
-      {/* Bento Grid Courses Section */}
-      <section id="courses" className="max-w-6xl mx-auto px-6 py-24">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-extrabold text-slate-900 mb-4">
-            مسیرهای آموزشی؛ طراحی شده برای بازار کار
-          </h2>
-          <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto">
-            از مدیریت سیستم‌عامل تا معماری میکروسرویس‌ها. هر دوره به گونه‌ای
-            تدوین شده است که شما را برای چالش‌های واقعی محیط‌های Production
-            آماده کند.
-          </p>
+      {/* 🌟 TRENDING COURSES SECTION (Top 10 Bento Grid) */}
+      <section id="trending-courses" className="max-w-6xl mx-auto px-6 py-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+          <div>
+            <h2 className="text-3xl font-extrabold text-slate-900 mb-4">
+              محبوب‌ترین مسیرهای آموزشی
+            </h2>
+            <p className="text-slate-500 text-lg font-medium max-w-2xl">
+              دوره‌هایی که بیشترین استقبال را در بین مهندسان زیرساخت داشته‌اند.
+            </p>
+          </div>
+          <Link
+            href="/courses"
+            className="hidden md:flex items-center gap-2 text-blue-600 font-bold hover:text-blue-700 transition-colors"
+          >
+            مشاهده همه
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {coursesWithStats.map(
+          {trendingCourses.map(
             (course: Course & { stats: any }, index: number) => {
               const isWide = index % 3 === 0;
               const courseLiveStats = course.stats;
@@ -212,17 +226,22 @@ export default async function HomePage() {
               return (
                 <article
                   key={course.id}
-                  className={`group relative bg-white border border-slate-200 rounded-3xl p-6 md:p-8 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 overflow-hidden flex flex-col ${isWide ? "lg:col-span-2 lg:flex-row lg:items-center gap-6 lg:gap-10" : "col-span-1 h-full justify-between"}`}
+                  className={`group relative bg-white border border-slate-200 rounded-3xl p-6 md:p-8 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 overflow-hidden flex flex-col ${
+                    isWide
+                      ? "lg:col-span-2 lg:flex-row lg:items-center gap-6 lg:gap-10"
+                      : "col-span-1 h-full justify-between"
+                  }`}
                 >
                   <div
-                    className={`absolute top-0 left-0 w-40 h-40 bg-gradient-to-br from-blue-50 to-transparent rounded-br-full -z-10 transition-transform duration-700 group-hover:scale-150 opacity-60 ${isWide ? "w-96 h-96 opacity-40" : ""}`}
+                    className={`absolute top-0 left-0 w-40 h-40 bg-gradient-to-br from-blue-50 to-transparent rounded-br-full -z-10 transition-transform duration-700 group-hover:scale-150 opacity-60 ${
+                      isWide ? "w-96 h-96 opacity-40" : ""
+                    }`}
                     aria-hidden="true"
                   />
 
                   <div className="flex-1 flex flex-col w-full">
                     <div className="flex justify-between items-start mb-6">
                       <div className="flex flex-wrap items-center gap-2">
-                        {/* Course Status Badge - DYNAMIC */}
                         {course.status === "completed" ? (
                           <div className="text-[11px] font-bold px-3 py-1.5 rounded-full border bg-emerald-50 text-emerald-600 border-emerald-200/60 backdrop-blur-sm flex items-center gap-1">
                             <svg
@@ -259,12 +278,10 @@ export default async function HomePage() {
                           </div>
                         )}
 
-                        {/* Course Marketing Badge */}
                         <div className="text-[11px] font-bold px-3 py-1.5 rounded-full border bg-blue-50/50 text-blue-700 border-blue-200/50 backdrop-blur-sm shadow-sm">
                           {course.badge}
                         </div>
 
-                        {/* Stats Badges */}
                         <div className="text-[11px] font-bold text-slate-500 bg-slate-50/50 border border-slate-200/50 px-2.5 py-1.5 rounded-full flex items-center gap-1.5 backdrop-blur-sm">
                           <span
                             className="flex items-center gap-1"
@@ -319,7 +336,6 @@ export default async function HomePage() {
                         </div>
                       </div>
 
-                      {/* Course Emoji Icon */}
                       <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center text-2xl shadow-sm bg-white border border-slate-100 group-hover:-translate-y-1 transition-transform">
                         {course.icon}
                       </div>
@@ -363,7 +379,19 @@ export default async function HomePage() {
             },
           )}
         </div>
+
+        {/* Mobile View All Button */}
+        <div className="mt-8 text-center md:hidden">
+          <Link
+            href="/courses"
+            className="inline-flex items-center justify-center w-full bg-slate-100 hover:bg-slate-200 text-slate-800 py-4 rounded-xl font-bold text-sm transition-colors"
+          >
+            مشاهده همه دوره‌ها
+          </Link>
+        </div>
       </section>
+
+      <Features />
 
       {/* FAQ Section */}
       <section className="max-w-4xl mx-auto px-6 py-20 border-t border-slate-200">
@@ -389,7 +417,6 @@ export default async function HomePage() {
                   <svg
                     fill="none"
                     height="20"
-                    shapeRendering="geometricPrecision"
                     stroke="currentColor"
                     strokeLinecap="round"
                     strokeLinejoin="round"
