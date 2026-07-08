@@ -9,13 +9,14 @@ import rehypeSlug from "rehype-slug";
 import CopyablePre from "@/components/CopyablePre";
 import TableOfContents from "@/components/TableOfContents";
 import ViewTracker from "@/components/ViewTracker";
+import CourseStats from "@/components/CourseStats"; // <-- 1. Imported the new component
 import { Metadata } from "next";
 
 type PageProps = {
   params: Promise<{ course: string; slug: string }>;
 };
 
-// 🎯 ۱. تولید متادیتای داینامیک برای سئو گوگل و شبکه‌های اجتماعی
+// ... (Generate Metadata function remains exactly the same)
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
@@ -26,7 +27,6 @@ export async function generateMetadata({
     return { title: "مقاله یافت نشد | اپس آکادمی" };
   }
 
-  // استخراج هوشمندانه اطلاعات متادیتا از Frontmatter فایل MDX با Regex
   const title = source.match(/title:\s*"(.*?)"/)?.[1] || "اپس آکادمی";
   const description = source.match(/description:\s*"(.*?)"/)?.[1] || "";
   const keywords = source.match(/keywords:\s*"(.*?)"/)?.[1] || "";
@@ -50,37 +50,46 @@ export async function generateMetadata({
   };
 }
 
-// 🎯 ۲. کامپوننت اصلی صفحه نمایش مقاله (سرور ساید)
 export default async function LessonPage({ params }: PageProps) {
   const { course, slug } = await params;
 
   const source = await getLessonContent(course, slug);
   if (!source) notFound();
 
-  // استخراج عنوان و توضیحات برای استفاده در اسکیما مارک‌آپ گوگل
-  const title = source.match(/title:\s*"(.*?)"/)?.[1] || "آموزش تخصصی";
+  // 1. Fetch raw title and clean it (removes leading numbers, dots, and spaces)
+  const rawTitle = source.match(/title:\s*"(.*?)"/)?.[1] || "آموزش تخصصی";
+  const cleanTitle = rawTitle.replace(/^[\d\.\-\s]+/, ""); // e.g., "0. Intro" -> "Intro"
+
   const description = source.match(/description:\s*"(.*?)"/)?.[1] || "";
 
-  // منطق پیدا کردن درس قبلی و بعدی برای دکمه‌های پایین صفحه
+  // 2. Extract reading time as a clean number (extracts only digits)
+  const rawReadingTime = source.match(/readingTime:\s*"(.*?)"/)?.[1] || "10";
+  const readingTimeMatch = rawReadingTime.match(/\d+/);
+  const readingTimeMinutes = readingTimeMatch
+    ? parseInt(readingTimeMatch[0], 10)
+    : 10;
+
   const allLessons = getCourseLessons(course);
   const currentIndex = allLessons.findIndex((lesson) => lesson.slug === slug);
   const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
   const nextLesson =
     currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
 
+  // Placeholder for Prisma views
+  const fetchedViews = 1250;
+
   return (
     <div
       className="flex flex-col lg:flex-row items-start max-w-[1400px] mx-auto w-full gap-8 px-6 py-8"
       dir="rtl"
     >
-      {/* 🎯 ۳. ساختار اسکیما مارک‌آپ برای ستاره‌دار شدن مقاله در نتایج گوگل (Schema Markup) */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "TechArticle",
-            headline: title,
+            headline: cleanTitle,
             description: description,
             author: {
               "@type": "Organization",
@@ -90,11 +99,30 @@ export default async function LessonPage({ params }: PageProps) {
         }}
       />
 
-      {/* کامپوننت ردیاب بازدیدهای زنده دیتابیس */}
       <ViewTracker courseId={course} />
 
-      {/* بخش محتوای اصلی مقاله با پشتیبانی کامپایل کامل ام‌دی‌اکس */}
       <article className="flex-1 min-w-0 prose prose-slate prose-img:rounded-xl max-w-4xl mx-auto transition-colors duration-300">
+        {/* 🎯 Clean Title and Conditionally Rendered Stats */}
+        <header className="mb-10 not-prose border-b border-slate-200 dark:border-slate-700/50 pb-6 transition-colors">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 mb-4 leading-tight">
+            {cleanTitle}
+          </h1>
+
+          {description && (
+            <p className="text-slate-600 dark:text-slate-400 text-lg mb-6 leading-relaxed">
+              {description}
+            </p>
+          )}
+
+          {/* Only show stats if this is the FIRST lesson of the course */}
+          {currentIndex === 0 && (
+            <CourseStats
+              views={fetchedViews}
+              readingTimeMinutes={readingTimeMinutes}
+            />
+          )}
+        </header>
+
         <MDXRemote
           source={source}
           components={{ pre: CopyablePre }}
@@ -110,7 +138,6 @@ export default async function LessonPage({ params }: PageProps) {
           }}
         />
 
-        {/* دکمه‌های ناوبری پایین صفحه */}
         <div className="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-row justify-between items-center not-prose transition-colors duration-300">
           <div className="w-1/2 flex justify-start">
             {prevLesson && (
@@ -135,7 +162,6 @@ export default async function LessonPage({ params }: PageProps) {
         </div>
       </article>
 
-      {/* بخش فهرست مطالب شناور در سمت چپ */}
       <aside className="hidden xl:block w-64 shrink-0 sticky top-[100px] h-[calc(100vh-120px)] overflow-y-auto pb-10">
         <TableOfContents />
       </aside>
