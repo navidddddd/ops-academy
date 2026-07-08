@@ -18,13 +18,36 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-24 mb-16">
           <div className="flex flex-col gap-6">
-            <Link href="/" className="flex items-center gap-3 w-max">
-              <div className="h-10 w-10 bg-gradient-to-tr from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center font-black text-white shadow-md shadow-blue-500/20">
-                Ops
+            <Link
+              href="/"
+              className="flex items-center gap-2.5 group shrink-0 w-max"
+            >
+              {/* 👈 دقیقاً همان SVG هدر قرار داده شد */}
+              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20 transition-transform group-hover:scale-105 shrink-0">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-white w-6 h-6"
+                >
+                  <polyline points="4 17 10 11 4 5"></polyline>
+                  <line x1="12" y1="19" x2="20" y2="19"></line>
+                </svg>
               </div>
-              <span className="text-2xl font-black text-white tracking-tight">
-                Ops Academy
-              </span>
+
+              {/* استایل متن هم دقیقاً شبیه هدر شد */}
+              <div className="flex flex-col">
+                <span className="font-black text-xl tracking-tight text-white leading-none">
+                  Ops<span className="text-blue-500">Academy</span>
+                </span>
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">
+                  Mastering Cloud & DevOps
+                </span>
+              </div>
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed font-medium">
               پلتفرم تخصصی آموزش عملی لینوکس، کانتینرها و زیرساخت ابری. ما
@@ -34,7 +57,6 @@ export default function Footer() {
           </div>
 
           <div className="flex flex-col gap-6">
-            {/* عنوان تغییر کرد به پربازدیدترین‌ها */}
             <h4 className="text-white font-extrabold text-lg tracking-wide">
               پربازدیدترین دوره‌ها
             </h4>

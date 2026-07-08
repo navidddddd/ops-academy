@@ -1,8 +1,9 @@
 {
-  "title": "بوت‌کمپ Enterprise SRE و Observability",
-  "badge": "مقدمه",
+  "title": "دوره جامع SRE Culture و Enterprise Observability",
+  "badge": "تخصصی SRE",
   "icon": "🔭",
-  "description": "نقشه راه جامع برای درک عمیق فرهنگ SRE و پیاده‌سازی سیستم‌های Observability در مقیاس Enterprise برای تضمین پایداری سیستم‌ها.",
+  "description": "آموزش جامع معماری قابلیت مشاهده‌پذیری و استقرار فرهنگ SRE در سازمان‌های بزرگ. ارتقای پایداری سیستم‌ها و عیب‌یابی پیشرفته در محیط‌های Production.",
   "order": 4,
-  "views": 5210
+  "views": 4250,
+  "status": "in-progress"
 }

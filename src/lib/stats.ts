@@ -1,88 +1,55 @@
 // src/lib/stats.ts
-import fs from "fs";
-import path from "path";
+import { PrismaClient } from "@prisma/client";
 
-// Storing the file in root directory prevents Next.js from hot-reloading during dev mode
-const statsFilePath = path.join(process.cwd(), "course-stats.json");
+// پاس دادن مستقیم آدرس دیتابیس برای جلوگیری از خطای PrismaClientInitializationError
+const prisma = new PrismaClient();
 
-export type CourseStats = {
-  views: number;
-  students: number;
-};
-
-export type AllStats = Record<string, CourseStats>;
-
-// Initialize the file with base realistic data if it doesn't exist
-function initStatsFile() {
-  if (!fs.existsSync(statsFilePath)) {
-    const initialStats: AllStats = {
-      rhcsa: { views: 1420, students: 480 },
-      "cnfc-docker": { views: 950, students: 310 },
-      hasicorp: { views: 620, students: 150 },
-      sre: { views: 410, students: 95 },
-    };
-    fs.writeFileSync(
-      statsFilePath,
-      JSON.stringify(initialStats, null, 2),
-      "utf-8",
-    );
-  }
-}
-
-// Fetch stats for a specific course securely
-export function getCourseStats(courseId: string): CourseStats {
-  initStatsFile();
+// ۱. افزایش تعداد بازدید یک دوره به صورت زنده در دیتابیس
+export async function incrementCourseViews(courseId: string) {
   try {
-    const content = fs.readFileSync(statsFilePath, "utf-8");
-    const allStats: AllStats = JSON.parse(content);
-    return allStats[courseId] || { views: 0, students: 0 };
+    await prisma.courseStat.upsert({
+      where: { courseId },
+      update: { views: { increment: 1 } },
+      create: { courseId, views: 1, students: 0 },
+    });
   } catch (error) {
-    return { views: 0, students: 0 };
+    console.error("Database tracking failed:", error);
   }
 }
 
-// Atomically increment course view count and simulate realistic student growth
-export function incrementCourseViews(courseId: string) {
-  initStatsFile();
+// ۲. دریافت آمارهای کلی صفحه اصلی (مجموع کل بازدیدها و کل دانشجوها)
+export async function getTotalGlobalStats() {
   try {
-    const content = fs.readFileSync(statsFilePath, "utf-8");
-    const allStats: AllStats = JSON.parse(content);
-
-    if (!allStats[courseId]) {
-      allStats[courseId] = { views: 0, students: 0 };
-    }
-
-    // Increment views by 1
-    allStats[courseId].views += 1;
-
-    // Professionally simulate a new student signup (5% chance on a page view)
-    if (Math.random() > 0.95) {
-      allStats[courseId].students += 1;
-    }
-
-    fs.writeFileSync(statsFilePath, JSON.stringify(allStats, null, 2), "utf-8");
-  } catch (error) {
-    console.error("Error updating analytics store:", error);
-  }
-}
-
-// Calculate total global stats for the hero section dynamically
-export function getTotalGlobalStats() {
-  initStatsFile();
-  try {
-    const content = fs.readFileSync(statsFilePath, "utf-8");
-    const allStats: AllStats = JSON.parse(content);
-
-    let totalViews = 0;
-    let totalStudents = 0;
-
-    Object.values(allStats).forEach((stat) => {
-      totalViews += stat.views;
-      totalStudents += stat.students;
+    const stats = await prisma.courseStat.aggregate({
+      _sum: {
+        views: true,
+        students: true,
+      },
     });
 
-    return { totalViews, totalStudents };
+    return {
+      totalViews: stats._sum.views || 0,
+      totalStudents: stats._sum.students || 0,
+    };
   } catch (error) {
-    return { totalViews: 3400, totalStudents: 1035 };
+    console.error("Failed to load global stats:", error);
+    return { totalViews: 0, totalStudents: 0 };
+  }
+}
+
+// ۳. دریافت آمارهای اختصاصی برای کارت‌های Bento Grid در صفحه اصلی
+export async function getCourseStats(courseId: string) {
+  try {
+    const stat = await prisma.courseStat.findUnique({
+      where: { courseId },
+    });
+
+    return {
+      views: stat?.views || 0,
+      students: stat?.students || 0,
+    };
+  } catch (error) {
+    console.error(`Failed to load stats for ${courseId}:`, error);
+    return { views: 0, students: 0 };
   }
 }

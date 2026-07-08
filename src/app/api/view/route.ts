@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 
     if (courseId) {
       // Trigger database increment securely on the node server
-      incrementCourseViews(courseId);
+      await incrementCourseViews(courseId);
       return NextResponse.json({ success: true });
     }
 

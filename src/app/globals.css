@@ -165,3 +165,22 @@ body {
     display: inline !important;
   }
 }
+
+/* انیمیشن حرکت بی‌نهایت برای حالت راست‌چین (RTL) */
+@keyframes scroll-rtl {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll-rtl 40s linear infinite;
+}
+
+/* وقتی کاربر موس رو میبره روی نوار، حرکت متوقف میشه */
+.animate-scroll:hover {
+  animation-play-state: paused;
+}

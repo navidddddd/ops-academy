@@ -1,3 +1,4 @@
+// src/app/learn/[course]/[slug]/page.tsx
 import { getLessonContent, getCourseLessons } from "@/lib/mdx";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
@@ -8,29 +9,59 @@ import rehypeSlug from "rehype-slug";
 import CopyablePre from "@/components/CopyablePre";
 import TableOfContents from "@/components/TableOfContents";
 import ViewTracker from "@/components/ViewTracker";
+import { Metadata } from "next";
 
 type PageProps = {
   params: Promise<{ course: string; slug: string }>;
 };
 
-export async function generateMetadata({ params }: PageProps) {
+// 🎯 ۱. تولید متادیتای داینامیک برای سئو گوگل و شبکه‌های اجتماعی
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { course, slug } = await params;
-  const formattedTitle = slug
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+  const source = await getLessonContent(course, slug);
+
+  if (!source) {
+    return { title: "مقاله یافت نشد | اپس آکادمی" };
+  }
+
+  // استخراج هوشمندانه اطلاعات متادیتا از Frontmatter فایل MDX با Regex
+  const title = source.match(/title:\s*"(.*?)"/)?.[1] || "اپس آکادمی";
+  const description = source.match(/description:\s*"(.*?)"/)?.[1] || "";
+  const keywords = source.match(/keywords:\s*"(.*?)"/)?.[1] || "";
 
   return {
-    title: `${formattedTitle} | ${course.toUpperCase()} Course`,
+    title: `${title} | اپس آکادمی`,
+    description: description,
+    keywords: keywords,
+    openGraph: {
+      title: title,
+      description: description,
+      type: "article",
+      siteName: "Ops Academy",
+      url: `https://ops-academy.ir/learn/${course}/${slug}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: title,
+      description: description,
+    },
   };
 }
 
+// 🎯 ۲. کامپوننت اصلی صفحه نمایش مقاله (سرور ساید)
 export default async function LessonPage({ params }: PageProps) {
   const { course, slug } = await params;
 
   const source = await getLessonContent(course, slug);
   if (!source) notFound();
 
+  // استخراج عنوان و توضیحات برای استفاده در اسکیما مارک‌آپ گوگل
+  const title = source.match(/title:\s*"(.*?)"/)?.[1] || "آموزش تخصصی";
+  const description = source.match(/description:\s*"(.*?)"/)?.[1] || "";
+
+  // منطق پیدا کردن درس قبلی و بعدی برای دکمه‌های پایین صفحه
   const allLessons = getCourseLessons(course);
   const currentIndex = allLessons.findIndex((lesson) => lesson.slug === slug);
   const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
@@ -42,10 +73,27 @@ export default async function LessonPage({ params }: PageProps) {
       className="flex flex-col lg:flex-row items-start max-w-[1400px] mx-auto w-full gap-8 px-6 py-8"
       dir="rtl"
     >
-      {/* کامپوننت ردیاب بازدیدها */}
+      {/* 🎯 ۳. ساختار اسکیما مارک‌آپ برای ستاره‌دار شدن مقاله در نتایج گوگل (Schema Markup) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "TechArticle",
+            headline: title,
+            description: description,
+            author: {
+              "@type": "Organization",
+              name: "Ops Academy",
+            },
+          }),
+        }}
+      />
+
+      {/* کامپوننت ردیاب بازدیدهای زنده دیتابیس */}
       <ViewTracker courseId={course} />
 
-      {/* بخش محتوای اصلی مقاله - با پشتیبانی کامل از حالت تاریک */}
+      {/* بخش محتوای اصلی مقاله با پشتیبانی کامپایل کامل ام‌دی‌اکس */}
       <article className="flex-1 min-w-0 prose prose-slate prose-img:rounded-xl max-w-4xl mx-auto transition-colors duration-300">
         <MDXRemote
           source={source}
@@ -87,7 +135,7 @@ export default async function LessonPage({ params }: PageProps) {
         </div>
       </article>
 
-      {/* بخش فهرست مطالب در سمت چپ - ثابت و دارای اسکرول داخلی */}
+      {/* بخش فهرست مطالب شناور در سمت چپ */}
       <aside className="hidden xl:block w-64 shrink-0 sticky top-[100px] h-[calc(100vh-120px)] overflow-y-auto pb-10">
         <TableOfContents />
       </aside>

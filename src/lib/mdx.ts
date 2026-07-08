@@ -1,13 +1,43 @@
 import fs from "fs";
 import path from "path";
-import matter from "gray-matter"; // پکیج جدید برای خواندن دیتای داخل MDX
+import matter from "gray-matter";
+
+// Define strict types for course status
+export type CourseStatus = "completed" | "in-progress";
+
+// Define the interface mapping directly to info.json structure
+export interface CourseInfo {
+  title: string;
+  badge: string;
+  icon: string;
+  description: string;
+  order: number;
+  views: number;
+  status?: CourseStatus;
+}
+
+// Define the final Course object interface that includes generated fields
+export interface Course extends CourseInfo {
+  id: string;
+  link: string;
+  status: CourseStatus; // Making it strictly required in the UI
+}
+
+export interface Lesson {
+  slug: string;
+  title: string;
+}
+
+export interface SearchableLesson extends Lesson {
+  course: string;
+}
 
 const root = path.join(process.cwd(), "content");
 
-export function getDynamicCoursesData() {
+export function getDynamicCoursesData(): Course[] {
   try {
     const courseFolders = fs.readdirSync(root);
-    const courses = [];
+    const courses: Course[] = [];
 
     for (const folder of courseFolders) {
       const coursePath = path.join(root, folder);
@@ -17,12 +47,13 @@ export function getDynamicCoursesData() {
 
         if (fs.existsSync(infoPath)) {
           const infoContent = fs.readFileSync(infoPath, "utf-8");
-          const courseInfo = JSON.parse(infoContent);
+          const courseInfo = JSON.parse(infoContent) as CourseInfo;
 
           const files = fs
             .readdirSync(coursePath)
             .filter((file) => file.endsWith(".mdx"));
-          // مرتب‌سازی هوشمند فایل‌ها بر اساس عدد (مثلا 1-2 بعد از 1-1 قرار بگیرد)
+
+          // Smart sorting based on numerical prefixes (e.g., 1-2 comes after 1-1)
           files.sort((a, b) =>
             a.localeCompare(b, undefined, { numeric: true }),
           );
@@ -33,25 +64,29 @@ export function getDynamicCoursesData() {
           courses.push({
             id: folder,
             ...courseInfo,
+            // Fallback to "in-progress" if the status is missing in older info.json files
+            status: courseInfo.status || "in-progress",
             link: firstLessonSlug ? `/learn/${folder}/${firstLessonSlug}` : "#",
           });
         }
       }
     }
-    return courses;
+
+    // Sort courses globally based on their 'order' field defined in info.json
+    return courses.sort((a, b) => a.order - b.order);
   } catch (error) {
     console.error("Error scanning dynamic courses:", error);
     return [];
   }
 }
 
-// ✨ آپدیت اصلی اینجاست: خواندن عنوان دقیق فارسی از داخل فایل
-export function getCourseLessons(course: string) {
+export function getCourseLessons(course: string): Lesson[] {
   const courseDir = path.join(root, course);
   try {
     const files = fs
       .readdirSync(courseDir)
       .filter((file) => file.endsWith(".mdx"));
+
     files.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
     return files.map((file) => {
@@ -59,10 +94,10 @@ export function getCourseLessons(course: string) {
       const filePath = path.join(courseDir, file);
       const fileContent = fs.readFileSync(filePath, "utf-8");
 
-      // استخراج اطلاعات خطوط اول فایل
+      // Extract frontmatter data (e.g., exact Persian title)
       const { data } = matter(fileContent);
 
-      // اگر تایتل در فایل وجود داشت آن را بردار، وگرنه از همان اسم فایل استفاده کن
+      // Fallback to filename slug if title is missing in frontmatter
       const formattedTitle = data.title || slug;
 
       return { slug, title: formattedTitle };
@@ -72,7 +107,10 @@ export function getCourseLessons(course: string) {
   }
 }
 
-export async function getLessonContent(course: string, slug: string) {
+export async function getLessonContent(
+  course: string,
+  slug: string,
+): Promise<string | null> {
   const filePath = path.join(root, course, `${slug}.mdx`);
   try {
     const content = fs.readFileSync(filePath, "utf-8");
@@ -82,10 +120,10 @@ export async function getLessonContent(course: string, slug: string) {
   }
 }
 
-export function getAllSearchableLessons() {
+export function getAllSearchableLessons(): SearchableLesson[] {
   try {
     const courseFolders = fs.readdirSync(root);
-    let allLessons: { course: string; slug: string; title: string }[] = [];
+    const allLessons: SearchableLesson[] = [];
 
     courseFolders.forEach((course) => {
       const coursePath = path.join(root, course);

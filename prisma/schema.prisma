@@ -1,79 +1,141 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// prisma/schema.prisma
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  // Connection URLs have been moved to prisma.config.ts according to Prisma 7+ standards
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
-// User model for authentication and profiles
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// ======================================================
+// 1. NextAuth.js Standard Models (For Google Auth)
+// ======================================================
 
-  // Relations
-  progress  UserProgress[]
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ======================================================
+// 2. User & Roles Model
+// ======================================================
 
 enum Role {
   USER
   ADMIN
 }
 
-// Course model (e.g., HTML, CSS, JavaScript)
+// User model for authentication, profiles, and progress tracking
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // NextAuth Relations
+  accounts      Account[]
+  sessions      Session[]
+  
+  // OpsAcademy Specific Relation
+  progress      UserProgress[]
+}
+
+// ======================================================
+// 3. OpsAcademy Educational Content Models (MDX Data)
+// ======================================================
+
+// Course model (e.g., HTML, CSS, JavaScript, cnfc-docker)
 model Course {
   id          String   @id @default(uuid())
-  title       String   // e.g., "HTML Tutorial"
-  slug        String   @unique // SEO-friendly URL: "html"
+  title       String   
+  slug        String   @unique 
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // Relations
   lessons     Lesson[]
 }
 
 // Lesson model representing individual tutorial pages
 model Lesson {
   id        String   @id @default(uuid())
-  title     String   // e.g., "HTML Introduction"
-  slug      String   @unique // SEO-friendly URL: "html-intro"
-  contentId String?  // Reference to MDX file name or identifier
-  order     Int      // To sort lessons sequentially in the sidebar menu
+  title     String   
+  slug      String   @unique 
+  contentId String?  
+  order     Int      
   courseId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relations
-  course    Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  progress  UserProgress[]
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
-  // Database indexes for faster read operations and SEO routing
   @@index([courseId])
   @@index([slug]) 
 }
 
-// Tracks which user has completed which lesson
+// ======================================================
+// 4. Progress and Statistics Models
+// ======================================================
+
+// Tracks which user completed which lesson in a course
 model UserProgress {
-  id        String   @id @default(uuid())
-  userId    String
-  lessonId  String
-  completed Boolean  @default(false)
-  updatedAt DateTime @updatedAt
+  id        String   @id @default(cuid())
+  userId    String   
+  courseId  String
+  slug      String   // Lesson slug
+  createdAt DateTime @default(now())
 
-  // Relations
+  // Link progress to the actual authenticated User
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
-  // Ensure a user can only have one progress record per lesson
-  @@unique([userId, lessonId])
+  // Prevent a user from completing the exact same lesson twice
+  @@unique([userId, courseId, slug])
   @@index([userId])
+}
+
+// Global statistics for courses
+model CourseStat {
+  courseId  String @id // e.g., cnfc-docker or rhcsa
+  views     Int    @default(0)
+  students  Int    @default(0)
 }

@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { getDynamicCoursesData } from "@/lib/mdx";
-// Import dynamic stats hooks
+// IMPORT UPDATE: Imported 'Course' interface to enforce strict typing
+import { getDynamicCoursesData, Course } from "@/lib/mdx";
 import { getCourseStats, getTotalGlobalStats } from "@/lib/stats";
+
+import TechStack from "@/components/TechStack";
+import Features from "@/components/Features";
 
 const FAQS = [
   {
@@ -18,13 +21,20 @@ const FAQS = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
   const courses = getDynamicCoursesData();
 
-  // Calculate alive server-side totals dynamically
-  const { totalViews, totalStudents } = getTotalGlobalStats();
   const sortedCourses = [...courses].sort(
     (a, b) => (a.order || 99) - (b.order || 99),
+  );
+
+  const { totalViews, totalStudents } = await getTotalGlobalStats();
+
+  const coursesWithStats = await Promise.all(
+    sortedCourses.map(async (course) => {
+      const stats = await getCourseStats(course.id);
+      return { ...course, stats };
+    }),
   );
 
   return (
@@ -69,7 +79,7 @@ export default function HomePage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div>
             <div className="text-3xl font-black text-slate-900 mb-1">
-              {totalStudents.toLocaleString("fa-IR")}+
+              {totalStudents?.toLocaleString("fa-IR") || "۰"}+
             </div>
             <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               دانشجوی فعال
@@ -77,7 +87,7 @@ export default function HomePage() {
           </div>
           <div>
             <div className="text-3xl font-black text-slate-900 mb-1">
-              {totalViews.toLocaleString("fa-IR")}+
+              {totalViews?.toLocaleString("fa-IR") || "۰"}+
             </div>
             <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               بازدید کل اسناد
@@ -100,6 +110,9 @@ export default function HomePage() {
         </div>
       </section>
 
+      <TechStack />
+      <Features />
+
       {/* Bento Grid Courses Section */}
       <section id="courses" className="max-w-6xl mx-auto px-6 py-24">
         <div className="text-center mb-16">
@@ -113,100 +126,143 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {sortedCourses.map((course: any, index: number) => {
-            // منطق Bento Grid: دوره‌هایی که ایندکس 0، 3، 6 و... دارند، دو ستونه می‌شوند!
-            const isWide = index % 3 === 0;
-            const courseLiveStats = getCourseStats(course.id);
+          {/* TYPE FIX: Used 'Course' interface combined with local 'stats' to ensure type safety */}
+          {coursesWithStats.map(
+            (course: Course & { stats: any }, index: number) => {
+              const isWide = index % 3 === 0;
+              const courseLiveStats = course.stats;
 
-            return (
-              <div
-                key={course.id}
-                className={`group relative bg-white border border-slate-200 rounded-3xl p-6 md:p-8 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 overflow-hidden flex flex-col ${isWide ? "lg:col-span-2 lg:flex-row lg:items-center gap-6 lg:gap-10" : "col-span-1 h-full justify-between"}`}
-              >
-                {/* تزئینات بک‌گراند (در کارت‌های بزرگ، هاله رنگی بزرگ‌تر است) */}
+              return (
                 <div
-                  className={`absolute top-0 left-0 w-40 h-40 bg-gradient-to-br from-blue-50 to-transparent rounded-br-full -z-10 transition-transform duration-700 group-hover:scale-150 opacity-60 ${isWide ? "w-96 h-96 opacity-40" : ""}`}
-                ></div>
+                  key={course.id}
+                  className={`group relative bg-white border border-slate-200 rounded-3xl p-6 md:p-8 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 overflow-hidden flex flex-col ${isWide ? "lg:col-span-2 lg:flex-row lg:items-center gap-6 lg:gap-10" : "col-span-1 h-full justify-between"}`}
+                >
+                  <div
+                    className={`absolute top-0 left-0 w-40 h-40 bg-gradient-to-br from-blue-50 to-transparent rounded-br-full -z-10 transition-transform duration-700 group-hover:scale-150 opacity-60 ${isWide ? "w-96 h-96 opacity-40" : ""}`}
+                  ></div>
 
-                {/* بخش متن و اطلاعات */}
-                <div className="flex-1 flex flex-col w-full">
-                  <div className="flex justify-between items-start mb-6">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <div className="text-[11px] font-bold px-3 py-1.5 rounded-full border bg-blue-50/50 text-blue-600 border-blue-100/50 backdrop-blur-sm">
-                        {course.badge}
+                  <div className="flex-1 flex flex-col w-full">
+                    <div className="flex justify-between items-start mb-6">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {/* Course Status Badge - DYNAMIC */}
+                        {course.status === "completed" ? (
+                          <div className="text-[11px] font-bold px-3 py-1.5 rounded-full border bg-emerald-50 text-emerald-600 border-emerald-200/60 backdrop-blur-sm flex items-center gap-1">
+                            <svg
+                              className="w-3.5 h-3.5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                              />
+                            </svg>
+                            تکمیل شده
+                          </div>
+                        ) : (
+                          <div className="text-[11px] font-bold px-3 py-1.5 rounded-full border bg-amber-50 text-amber-600 border-amber-200/60 backdrop-blur-sm flex items-center gap-1">
+                            <svg
+                              className="w-3.5 h-3.5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                              />
+                            </svg>
+                            در حال تکمیل شدن
+                          </div>
+                        )}
+
+                        {/* Course Marketing Badge */}
+                        <div className="text-[11px] font-bold px-3 py-1.5 rounded-full border bg-blue-50/50 text-blue-600 border-blue-100/50 backdrop-blur-sm">
+                          {course.badge}
+                        </div>
+
+                        {/* Stats Badges */}
+                        <div className="text-[11px] font-bold text-slate-500 bg-slate-50/50 border border-slate-200/50 px-2.5 py-1.5 rounded-full flex items-center gap-1.5 backdrop-blur-sm">
+                          <span className="flex items-center gap-1">
+                            <svg
+                              className="w-3.5 h-3.5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                              />
+                            </svg>
+                            {courseLiveStats?.views?.toLocaleString("fa-IR") ||
+                              "۰"}
+                          </span>
+                          <span className="text-slate-300">|</span>
+                          <span className="flex items-center gap-1">
+                            <svg
+                              className="w-3.5 h-3.5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                              />
+                            </svg>
+                            {courseLiveStats?.students?.toLocaleString(
+                              "fa-IR",
+                            ) || "۰"}
+                          </span>
+                        </div>
                       </div>
-                      {/* استایل شیک‌تر برای آمار واقعی با آیکون‌های SVG */}
-                      <div className="text-[11px] font-bold text-slate-500 bg-slate-50/50 border border-slate-200/50 px-2.5 py-1.5 rounded-full flex items-center gap-1.5 backdrop-blur-sm">
-                        <span className="flex items-center gap-1">
-                          <svg
-                            className="w-3.5 h-3.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                            />
-                          </svg>
-                          {courseLiveStats.views.toLocaleString("fa-IR")}
-                        </span>
-                        <span className="text-slate-300">|</span>
-                        <span className="flex items-center gap-1">
-                          <svg
-                            className="w-3.5 h-3.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                            />
-                          </svg>
-                          {courseLiveStats.students.toLocaleString("fa-IR")}
-                        </span>
+
+                      {/* Course Emoji Icon */}
+                      <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center text-2xl shadow-sm bg-white border border-slate-100 group-hover:-translate-y-1 transition-transform">
+                        {course.icon}
                       </div>
                     </div>
-                    <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center text-2xl shadow-sm bg-white border border-slate-100 group-hover:-translate-y-1 transition-transform">
-                      {course.icon}
-                    </div>
+
+                    <h3
+                      className={`font-black text-slate-900 mb-3 transition-colors group-hover:text-blue-600 ${isWide ? "text-3xl" : "text-xl"}`}
+                    >
+                      {course.title}
+                    </h3>
+                    <p className="text-slate-500 text-sm leading-relaxed mb-6 lg:mb-0">
+                      {course.description}
+                    </p>
                   </div>
 
-                  <h3
-                    className={`font-black text-slate-900 mb-3 transition-colors group-hover:text-blue-600 ${isWide ? "text-3xl" : "text-xl"}`}
+                  <div
+                    className={`${isWide ? "w-full lg:w-64 shrink-0 border-t lg:border-t-0 lg:border-r border-slate-100 pt-6 lg:pt-0 lg:pr-10 flex items-center justify-center" : "w-full mt-auto pt-6 border-t border-slate-100"}`}
                   >
-                    {course.title}
-                  </h3>
-                  <p className="text-slate-500 text-sm leading-relaxed mb-6 lg:mb-0">
-                    {course.description}
-                  </p>
+                    <Link
+                      href={course.link}
+                      className="w-full bg-white text-slate-700 group-hover:text-white border border-slate-200 group-hover:bg-blue-600 group-hover:border-blue-600 py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
+                    >
+                      ورود به کلاس ←
+                    </Link>
+                  </div>
                 </div>
-
-                {/* بخش دکمه ورود (در کارت بزرگ، توسط یک خط عمودی جدا می‌شود) */}
-                <div
-                  className={`${isWide ? "w-full lg:w-64 shrink-0 border-t lg:border-t-0 lg:border-r border-slate-100 pt-6 lg:pt-0 lg:pr-10 flex items-center justify-center" : "w-full mt-auto pt-6 border-t border-slate-100"}`}
-                >
-                  <Link
-                    href={course.link}
-                    className="w-full bg-white text-slate-700 group-hover:text-white border border-slate-200 group-hover:bg-blue-600 group-hover:border-blue-600 py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
-                  >
-                    ورود به کلاس ←
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
+              );
+            },
+          )}
         </div>
       </section>
 

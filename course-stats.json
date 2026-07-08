@@ -1,6 +1,6 @@
 {
   "rhcsa": {
-    "views": 1546,
+    "views": 1568,
     "students": 486
   },
   "cnfc-docker": {
@@ -12,7 +12,7 @@
     "students": 151
   },
   "sre": {
-    "views": 414,
+    "views": 418,
     "students": 95
   }
 }
