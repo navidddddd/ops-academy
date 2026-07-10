@@ -1,9 +1,9 @@
 {
-  "title": "دوره جامع Docker و Kubernetes: آمادگی CKA",
-  "badge": "مسترکلاس SRE/CKA",
+  "title": "دوره جامع Docker و Kubernetes",
+  "badge": "مسترکلاس تخصصی زیرساخت",
   "icon": "☸️",
-  "description": "تسلط بر معماری کانتینرها و ارکستریشن کوبرنتیز با رویکرد مهندسی قابلیت اطمینان سایت. آمادگی قطعی برای آزمون رسمی CKA.",
+  "description": "مسیر یادگیری جامع و ساختاریافته از مبانی پایه‌ای زیرساخت تا تسلط کامل بر Docker و Kubernetes جهت آمادگی در آزمون CKA و محیط‌های Production.",
   "order": 2,
-  "views": 4850,
+  "views": 4250,
   "status": "in-progress"
 }

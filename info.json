@@ -1,0 +1,9 @@
+{
+  "title": "دوره جامع Docker و Kubernetes",
+  "badge": "مسترکلاس دواپس",
+  "icon": "☸️",
+  "description": "آموزش صفر تا صد داکر و کوبرنیتیز، ویژه آمادگی آزمون CKA و تسلط بر معماری زیرساخت‌های Cloud-Native و پروداکشن.",
+  "order": 2,
+  "views": 4150,
+  "status": "in-progress"
+}
