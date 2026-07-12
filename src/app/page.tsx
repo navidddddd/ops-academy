@@ -158,7 +158,7 @@ export default async function HomePage() {
       </section>
 
       {/* Live Global Stats Section */}
-      <section
+      {/* <section
         className="max-w-5xl mx-auto px-6 py-12 bg-slate-50"
         aria-label="Global Statistics"
       >
@@ -194,7 +194,7 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <TechStack />
 
